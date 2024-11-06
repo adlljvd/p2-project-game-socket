@@ -121,7 +121,7 @@ export default function TypingPage() {
           onClick={() => navigate("/")}
           className="bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-lg border-4 border-black font-bold"
         >
-          ← Kembali
+          ← Back
         </button>
 
         <h1
@@ -141,9 +141,8 @@ export default function TypingPage() {
             {getPlayers().map((player) => (
               <div
                 key={player.id}
-                className={`bg-white p-3 rounded-lg border-2 border-black ${
-                  player.isCurrentPlayer ? "ring-2 ring-yellow-400" : ""
-                }`}
+                className={`bg-white p-3 rounded-lg border-2 border-black ${player.isCurrentPlayer ? "ring-2 ring-yellow-400" : ""
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <img
@@ -163,9 +162,8 @@ export default function TypingPage() {
                       >
                         <div className="absolute -right-4 -top-1 transform -translate-y-1/4">
                           <span
-                            className={`text-xl ${
-                              player.isCurrentPlayer ? "scale-125" : ""
-                            }`}
+                            className={`text-xl ${player.isCurrentPlayer ? "scale-125" : ""
+                              }`}
                           >
                             🚗
                           </span>
@@ -193,7 +191,7 @@ export default function TypingPage() {
               </span>
               <span className="text-lg font-bold font-mono">CPM: {cpm}</span>
               <span className="text-lg font-bold font-mono text-red-600">
-                Kesalahan: {totalErrors}
+                Mistake: {totalErrors}
               </span>
             </div>
             <button
