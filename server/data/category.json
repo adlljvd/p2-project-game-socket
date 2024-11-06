@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Hewan",
+    "imgUrl": "https://images.pngtree.com/element_our/png_detail/20181229/cute-cartoon-animals-png_302404.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Buah",
+    "imgUrl": "https://images.pngtree.com/element_our/png_detail/20181229/fresh-fruits-clipart-cartoon-illustration-png_304940.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Kendaraan",
+    "imgUrl": "https://images.pngtree.com/element_our/png_detail/20180925/cute-cartoon-car_119643.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Negara",
+    "imgUrl": "https://images.pngtree.com/element_our/png_detail/20181229/cute-earth-globe-cartoon-png_304210.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Makanan",
+    "imgUrl": "https://images.pngtree.com/element_our/png_detail/20181229/cute-fast-food-cartoon-png_304363.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Alat Musik",
+    "imgUrl": "https://images.pngtree.com/element_our/png_detail/20181229/cute-cartoon-guitar-png_304470.jpg"
+  },
+  {
+    "id": 7,
+    "name": "Warna",
+    "imgUrl": "https://images.pngtree.com/element_our/png_detail/20181018/color-palette-png_115066.jpg"
+  },
+  {
+    "id": 8,
+    "name": "Olahraga",
+    "imgUrl": "https://images.pngtree.com/element_our/png_detail/20181227/basketball-cartoon-character-png_312003.jpg"
+  }
+]
