@@ -1,31 +1,52 @@
-
-import axios from 'axios';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import clickSound from '../assets/sounds/click-sound.mp3';
 import foxAvatar from '../assets/fox.png';
 
 export default function HomePage({ base_url }) {
     const [name, setName] = useState('');
     const [language, setLanguage] = useState('ID');
     const [selectedGame, setSelectedGame] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const navigate = useNavigate();
 
-    // Handle Play Now Button Click
-    const handlePlayNow = () => {
-        if (name && selectedGame) {
-            const gamePath = selectedGame === 'drawing-game' ? '/drawing-game' : '/typing-game';
-            navigate(gamePath, { state: { name, language } });
-        }
+    // Audio instance for the click sound
+    const clickAudio = new Audio(clickSound);
+
+    const categories = {
+        Animals: ["Dog", "Cat"],
+        Food: ["Pizza", "Burger"],
+        Places: ["Beach", "Mountain"]
     };
 
     // Handle Game Selection
     const selectGame = (game) => {
-        setSelectedGame(game); // Set the selected game
+        clickAudio.play(); // Play sound when game is selected
+        setSelectedGame(game);
+    };
+
+    // Handle Play Now Button Click
+    const handlePlayNow = () => {
+        if (!name || !selectedGame) return;
+
+        clickAudio.play(); // Play sound on clicking Play Now
+
+        if (selectedGame === 'drawing-game') {
+            setIsModalOpen(true);
+        } else {
+            navigate('/typing-game', { state: { name, language } });
+        }
+    };
+
+    const handleCategorySelect = (category) => {
+        setSelectedCategory(category);
+        setIsModalOpen(false);
+        navigate('/drawing-game', { state: { name, language, category } });
     };
 
     return (
         <div style={{ backgroundColor: '#A3C4C9' }} className="bg-saltedegg w-full h-screen flex flex-col items-center justify-center">
-            {/* Title Section */}
             <h1 className="text-4xl font-bold mb-8" style={{ fontFamily: '"Press Start 2P", sans-serif', color: '#333' }}>
                 Draw, Type, Win!
             </h1>
@@ -101,6 +122,35 @@ export default function HomePage({ base_url }) {
                     </div>
                 </section>
             </main>
+
+            {/* Category Selection Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white w-80 p-5 rounded-lg shadow-lg border-4 border-black">
+                        <h2 className="text-xl font-bold mb-4 text-center" style={{ fontFamily: '"Roboto Mono", sans-serif' }}>
+                            Select a Category
+                        </h2>
+                        <ul className="space-y-2">
+                            {Object.keys(categories).map((category) => (
+                                <li key={category}>
+                                    <button
+                                        onClick={() => handleCategorySelect(category)}
+                                        className="w-full bg-blue-200 hover:bg-blue-300 py-2 rounded-lg border-2 border-black"
+                                    >
+                                        {category}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                        <button
+                            onClick={() => setIsModalOpen(false)}
+                            className="mt-4 w-full bg-red-400 hover:bg-red-500 py-2 rounded-lg border-2 border-black"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
