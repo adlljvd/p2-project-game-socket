@@ -18,7 +18,7 @@ export default function DrawingPage() {
     const navigate = useNavigate();
     const defaultName = 'pokya';
     const { name = defaultName, item } = location.state || { name: defaultName };
-  
+
     const itemsToDraw = ["Dog", "Cat"]; // Example items
 
     // Contoh data pemain online (nanti bisa diintegrasikan dengan backend)
@@ -36,6 +36,7 @@ export default function DrawingPage() {
         { id: 11, name: "Player 11", score: 45 },
     ];
 
+    useEffect(() => {
         if (selectedItem) {
             const canvas = canvasRef.current;
             canvas.width = canvas.parentElement.clientWidth;
@@ -50,6 +51,7 @@ export default function DrawingPage() {
     useEffect(() => {
         const canvas = canvasRef.current;
         const container = canvas.parentElement;
+
         // Sesuaikan ukuran canvas dengan container
         const setCanvasSize = () => {
             const rect = container.getBoundingClientRect();
@@ -85,7 +87,6 @@ export default function DrawingPage() {
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
 
-
         const x = (e.clientX - rect.left) * scaleX;
         const y = (e.clientY - rect.top) * scaleY;
 
@@ -101,9 +102,9 @@ export default function DrawingPage() {
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
+
         const x = (e.clientX - rect.left) * scaleX;
         const y = (e.clientY - rect.top) * scaleY;
-
 
         context.lineTo(x, y);
         context.stroke();
@@ -125,7 +126,6 @@ export default function DrawingPage() {
         e.preventDefault();
         if (newMessage.trim()) {
             const isCorrectGuess = newMessage.toLowerCase().trim() === item?.toLowerCase().trim();
-
             setMessages([...messages, {
                 text: isCorrectGuess ? "Nah itu dia! 🎉" : newMessage,
                 sender: name || defaultName,
@@ -222,14 +222,13 @@ export default function DrawingPage() {
                         </div>
                     </div>
                 </div>
-                
+
                 {/* Drawing Section - Atur min-height untuk mobile */}
                 <div className="flex-1 min-w-[300px]">
                     <div className="bg-white p-4 rounded-lg border-4 border-black h-[400px] lg:h-[calc(600px+4rem)]">
                         {/* Tools Section - Buat responsive */}
                         <div className="flex flex-wrap justify-between gap-2 mb-4">
                             <div className="flex flex-wrap gap-2">
-
                                 <button
                                     onClick={() => setTool('pencil')}
                                     className={`px-3 lg:px-4 py-2 rounded-lg border-4 border-black font-bold text-sm lg:text-base ${tool === 'pencil'
@@ -262,7 +261,6 @@ export default function DrawingPage() {
                                     onChange={(e) => setColor(e.target.value)}
                                     className="w-12 h-12 rounded border-4 border-black cursor-pointer"
                                 />
-
                                 <select
                                     value={brushSize}
                                     onChange={(e) => setBrushSize(Number(e.target.value))}
@@ -290,7 +288,6 @@ export default function DrawingPage() {
                                     className="cursor-crosshair w-full h-full rounded-lg"
                                 />
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -301,15 +298,11 @@ export default function DrawingPage() {
                         <div className="bg-yellow-100 p-2 rounded-lg border-2 border-black mb-4">
                             <p className="text-center font-bold">Remaining Time: 60s</p>
                         </div>
-                    </div>
-                </div>
-
 
                         {/* Tebakan */}
                         <div className="h-1/2 flex flex-col mb-4">
                             <div className="flex-1 overflow-y-auto bg-white rounded-lg p-4 border-2 border-black">
                                 <div className="text-center font-bold mb-2 text-sm bg-yellow-100 rounded-lg py-1">
-
                                     Guess
                                 </div>
                                 {messages.map((message, index) => (
@@ -326,7 +319,6 @@ export default function DrawingPage() {
                                     type="text"
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
-
                                     placeholder="Send guess..."
                                     className="flex-1 p-2 rounded-lg border-2 border-black focus:outline-none"
                                 />
@@ -334,7 +326,6 @@ export default function DrawingPage() {
                                     type="submit"
                                     className="bg-green-400 text-white px-4 py-2 rounded-lg border-4 border-black hover:bg-green-500"
                                 >
-
                                     Guess
                                 </button>
                             </form>
@@ -358,7 +349,6 @@ export default function DrawingPage() {
                                     type="text"
                                     value={newNormalMessage}
                                     onChange={(e) => setNewNormalMessage(e.target.value)}
-
                                     placeholder="Send message..."
                                     className="flex-1 p-2 rounded-lg border-2 border-black focus:outline-none"
                                 />
@@ -366,7 +356,6 @@ export default function DrawingPage() {
                                     type="submit"
                                     className="bg-blue-400 text-white px-4 py-2 rounded-lg border-4 border-black hover:bg-blue-500"
                                 >
-
                                     Send
                                 </button>
                             </form>
