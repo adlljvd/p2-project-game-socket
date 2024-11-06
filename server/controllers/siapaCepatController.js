@@ -1,6 +1,8 @@
 const { Category, Item } = require('../models')
 
 class SiapaCepatController {
+
+    // category
     static async readCategories(req, res, next) {
         try {
             const category = await Category.findAll()
@@ -9,7 +11,6 @@ class SiapaCepatController {
                 category
             })
         } catch (error) {
-            console.log(error)
             next(error)
         }
     }
@@ -24,7 +25,6 @@ class SiapaCepatController {
                 category
             })
         } catch (error) {
-            console.log(error)
             next(error)
         }
     }
@@ -33,9 +33,15 @@ class SiapaCepatController {
             const { id } = req.params
             const { name, imgUrl } = req.body
 
-            const category = await Category.update({ name, imgUrl }, {
+            const findCategory = await Category.findByPk(id)
+
+            if (!findCategory) {
+                throw { name: "DataNotFound" }
+            }
+
+            const category = await findCategory.update({ name, imgUrl }, {
                 where: {
-                    id
+                    id: findCategory.id
                 }
             })
 
@@ -44,28 +50,29 @@ class SiapaCepatController {
                 category
             })
         } catch (error) {
-            console.log(error)
             next(error)
         }
     }
     static async deleteCategories(req, res, next) {
         try {
             const { id } = req.params
+            // console.log(id, '<<<<<<<<<<<<<,<<<')
             let category = await Category.findByPk(id)
 
+            // console.log(category, '<<<<<<<<<<<<<<<<<<<<<<<<<')
             if (!category) throw { name: `DataNotFound` }
 
             await Category.destroy({
                 where: {
                     id
-                }
+                },
+                force: true
             })
 
             res.status(200).json({
                 message: 'Success delete Category',
             })
         } catch (error) {
-            console.log(error)
             next(error)
         }
     }
@@ -79,7 +86,6 @@ class SiapaCepatController {
                 items
             })
         } catch (error) {
-            console.log(error)
             next(error)
         }
     }
@@ -100,7 +106,6 @@ class SiapaCepatController {
                 items
             })
         } catch (error) {
-            console.log(error)
             next(error)
         }
     }
@@ -109,7 +114,11 @@ class SiapaCepatController {
             const { id } = req.params
             const { name, CategoryId } = req.body
 
-            const items = await Item.update({ name, CategoryId }, { where: { id } }, {
+            const findItems = await Item.findByPk(id)
+
+            if (!findItems) throw { name: 'DataNotFound' }
+
+            const items = await findItems.update({ name, CategoryId }, { where: { id: findItems.id } }, {
                 include: [
                     {
                         model: Category
@@ -122,28 +131,28 @@ class SiapaCepatController {
                 items
             })
         } catch (error) {
-            console.log(error)
             next(error)
         }
     }
     static async deleteItem(req, res, next) {
         try {
             const { id } = req.params
-            let item = await Item.findByPk(id)
+            const item = await Item.findByPk(id)
+            // console.log("masuk");
 
-            if (!item) throw { name: `DataNotFound` }
+            if (!item) {
+                throw ({ name: "DataNotFound" })
+            }
+            // console.log("masuk2");
 
-            await Item.destroy({
-                where: {
-                    id
-                }
-            })
+            await item.destroy()
 
             res.status(200).json({
                 message: 'Success delete Category',
             })
         } catch (error) {
-            console.log(error)
+            console.log(error, "<<<errorrrrrr");
+
             next(error)
         }
     }

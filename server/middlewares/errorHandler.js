@@ -1,21 +1,22 @@
-const errorHandler = async () => {
+const errorHandler = async (error, req, res, next) => {
+    console.log(error, '<<<<<<<<<<<<<<<<<<<<<<,,,,,,,,,<<<<<<<,,<,<,,<,,<,<,<,,,<<,<,<,<,<<<<<');
     let status = 500;
     let message = "Internal server error";
 
-    console.log(error);
 
     if (error.name === "SequelizeValidationError") {
         status = 400;
-        message = error.errors[0].message;
+        message = error.errors[0].mexwssage;
     }
-
-
     if (error.name === "SequelizeUniqueConstraintError") {
         status = 400;
         message = error.errors[0].message;
     }
 
-
+    if (error.name === 'SequelizeForeignKeyConstraintError') {
+        status = 422;
+        message = 'Please select an existing category'
+    }
 
     if (error.name === "DataNotFound") {
         status = 404;
