@@ -3,7 +3,7 @@ import HomePage from "../views/HomePage";
 import DrawingPage from "../views/DrawingPage";
 import TypingPage from "../views/TypingPage";
 
-const base_url = "";
+const base_url = "http://localhost:3000";
 
 const router = createBrowserRouter([
     {
