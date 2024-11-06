@@ -2,12 +2,12 @@ const http = require('http');
 const { Server } = require('socket.io');
 const app = require('../app');
 
-const PORT = process.env.PORT || 3024;
+const PORT = 3024; // Hardcoded URL, tidak menggunakan process.env
 const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
     cors: {
-        origin: process.env.CLIENT_URL || "http://localhost:5173",
+        origin: "http://localhost:5173", // Hardcoded URL
         methods: ["GET", "POST"]
     }
 });
@@ -19,12 +19,10 @@ let typingPlayers = new Map();
 io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
-    // Send initial state to the connected client
+    // Mengirimkan status gambar dan chat history saat user bergabung
     socket.emit("drawing-state", drawingState);
     socket.emit("chat-history", chatHistory);
-    socket.emit("player-joined", Array.from(typingPlayers.values()));
 
-    // Chat message handling
     socket.on("send-message", (messageData) => {
         const messageWithId = {
             ...messageData,
@@ -35,13 +33,14 @@ io.on("connection", (socket) => {
         io.emit("receive-message", messageWithId);
     });
 
-    // Drawing events
+    // Event untuk menggambar real-time
     socket.on("start-drawing", (data) => {
+        drawingState.push(data); // Menyimpan posisi awal drawing
         socket.broadcast.emit("start-drawing", data);
     });
 
     socket.on("draw", (data) => {
-        drawingState.push(data);
+        drawingState.push(data); // Menyimpan garis yang digambar
         socket.broadcast.emit("draw", data);
     });
 
@@ -50,13 +49,23 @@ io.on("connection", (socket) => {
     });
 
     socket.on("clear-canvas", () => {
-        drawingState = [];
+        drawingState = []; // Reset state gambar
         io.emit("clear-canvas");
     });
 
-    // Typing race game events
+    // Chat Room untuk Drawing Game
+    socket.on("send-room-message", (messageData) => {
+        const messageWithId = {
+            ...messageData,
+            id: Date.now(),
+            socketId: socket.id
+        };
+        chatHistory.push(messageWithId); // Menyimpan pesan di history
+        io.emit("receive-room-message", messageWithId); // Emit pesan ke semua user di room
+    });
+
+    // Untuk Typing Race tetap seperti semula, tidak diubah
     socket.on("join-race", ({ username }) => {
-        console.log("User joined race:", username);
         typingPlayers.set(socket.id, {
             id: socket.id,
             username,
@@ -99,5 +108,5 @@ io.on("connection", (socket) => {
 });
 
 httpServer.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server berjalan di port ${PORT}`);
 });

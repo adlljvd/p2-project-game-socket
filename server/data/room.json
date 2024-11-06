@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Room A",
+    "status": "Playing",
+    "CategoryId": 1,
+    "maxPlayer": 8
+  },
+  {
+    "name": "Room B",
+    "status": "Online",
+    "CategoryId": 2,
+    "maxPlayer": 8
+  },
+  {
+    "name": "Room C",
+    "status": "Playing",
+    "CategoryId": 3,
+    "maxPlayer": 8
+  },
+  {
+    "name": "Room D",
+    "status": "Playing",
+    "CategoryId": 1,
+    "maxPlayer": 8
+  },
+  {
+    "name": "Room E",
+    "status": "Online",
+    "CategoryId": 2,
+    "maxPlayer": 8
+  }
+]
