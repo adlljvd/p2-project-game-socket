@@ -17,12 +17,14 @@ let chatHistory = [];
 let typingPlayers = new Map();
 
 io.on("connection", (socket) => {
-    // console.log("User connected:", socket.id);
+    console.log("User connected:", socket.id);
 
+    // Send initial state to the connected client
     socket.emit("drawing-state", drawingState);
     socket.emit("chat-history", chatHistory);
     socket.emit("player-joined", Array.from(typingPlayers.values()));
 
+    // Chat message handling
     socket.on("send-message", (messageData) => {
         const messageWithId = {
             ...messageData,
@@ -33,6 +35,7 @@ io.on("connection", (socket) => {
         io.emit("receive-message", messageWithId);
     });
 
+    // Drawing events
     socket.on("start-drawing", (data) => {
         socket.broadcast.emit("start-drawing", data);
     });
@@ -51,7 +54,9 @@ io.on("connection", (socket) => {
         io.emit("clear-canvas");
     });
 
+    // Typing race game events
     socket.on("join-race", ({ username }) => {
+        console.log("User joined race:", username);
         typingPlayers.set(socket.id, {
             id: socket.id,
             username,
@@ -94,5 +99,5 @@ io.on("connection", (socket) => {
 });
 
 httpServer.listen(PORT, () => {
-    console.log(`Server berjalan di port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
