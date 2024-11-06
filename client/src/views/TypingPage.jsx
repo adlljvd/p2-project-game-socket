@@ -5,8 +5,9 @@ import { useNavigate } from "react-router-dom";
 export default function TypingPage() {
   const paragraphs = [
     "Kucing sepatu bunga terbang layang hati pelangi gelas, bulu mata pintu suara malam sarung tangga asap jendela salju hujan pelangi sapi jam meja tanah.",
-    "Kursi kabut tas mobil bulan celana laut payung lilin sandal rak. tembok payung gajah lampu ember angin pasir kain siang kopi. merah meja daun sungai awan buku sepatu jeruk payung domba pulpen kunci api tikar kursi tanah ember boneka ikan bola hijau bintang.",
-    "Langit pintu matahari kertas sepatu pohon kaca sandal, sepeda awan piring kopi layar anggur roti botol. pisau es batu pelangi rumput lilin kain ember daun jari buku topi boneka lemari suara gelombang air mangga jam tangan meja motor singa.",
+    "Kursi kabut tas mobil bulan celana laut payung lilin sandal rak. gajah lampu ember angin pasir kain siang kopi. merah meja daun api tikar kursi tanah ikan bola hijau bintang.",
+    "Langit pintu matahari kertas sepatu pohon kaca sandal, sepeda awan piring kopi layar anggur roti botol. pisau es air mangga jam tangan meja motor singa.",
+    "Kelinci hitam kursi tisu pandai kelincahan kesadaran. mencari sapu induk keberhasilan makan biru soda sandal hijau es, botol kursi ketenangan keragaman kertas."
   ];
 
   const getRandomParagraph = () => {

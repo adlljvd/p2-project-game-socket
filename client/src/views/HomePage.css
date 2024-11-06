@@ -1,0 +1,21 @@
+/* HomePage.css */
+@keyframes popUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-10px); /* Lompat ke atas */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Kembali ke posisi */
+  }
+}
+
+.popUpChar {
+  display: inline-block;
+  opacity: 0;
+  animation: popUp 0.5s ease forwards;
+}

@@ -19,7 +19,7 @@ export default function DrawingPage() {
     const defaultName = 'pokya';
     const { name = defaultName, item } = location.state || { name: defaultName };
 
-    const itemsToDraw = ["Dog", "Cat"]; // Example items
+    const itemsToDraw = ["Rafless", "Cat"]; // Example items
 
     // Contoh data pemain online (nanti bisa diintegrasikan dengan backend)
     const onlinePlayers = [
