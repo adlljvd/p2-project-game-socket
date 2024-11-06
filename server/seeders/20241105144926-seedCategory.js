@@ -1,15 +1,13 @@
 'use strict';
 
-let category = require('../data/category.json')
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
+    let category = require('../data/category.json')
     category.forEach(el => {
       delete el.id
       el.updatedAt = el.createdAt = new Date()
-
-      return el
     })
 
     await queryInterface.bulkInsert('Categories', category, {})
