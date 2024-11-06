@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Category extends Model {
+  class Room extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,11 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Category.hasMany(models.Item, { foreignKey: 'CategoryId' })
-      Category.hasMany(models.Room, { foreignKey: 'CategoryId' })
+      Room.belongsTo(models.Category, { foreignKey: 'CategoryId' })
     }
   }
-  Category.init({
+  Room.init({
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -28,21 +27,46 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    imgUrl: {
+    status: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'imgUrl is required'
+          msg: 'status is required'
         },
         notEmpty: {
-          msg: 'imgUrl is required'
+          msg: 'status is required'
         }
       }
     },
+    CategoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'CategoryId is required'
+        },
+        notEmpty: {
+          msg: 'CategoryId is required'
+        }
+      }
+    },
+    maxPlayer: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'maxPlayer is required'
+        },
+        notEmpty: {
+          msg: 'maxPlayer is required'
+        }
+      },
+      defaultValue: 8
+    },
   }, {
     sequelize,
-    modelName: 'Category',
+    modelName: 'Room',
   });
-  return Category;
+  return Room;
 };
