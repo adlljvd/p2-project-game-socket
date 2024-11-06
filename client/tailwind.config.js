@@ -1,3 +1,5 @@
+import tailwindScrollbar from 'tailwind-scrollbar';
+
 export default {
   content: [
     "./index.html",
@@ -6,9 +8,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        saltedegg: '#A3C4C9',
+        saltedegg: '#A3C4C9', // Define your salted egg color here
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
+  plugins: [
+    tailwindScrollbar({ nocompatible: true }),
+  ],
 }
