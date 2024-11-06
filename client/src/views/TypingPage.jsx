@@ -25,16 +25,14 @@ export default function TypingPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get name from location state or fallback to localStorage
   const name = location.state?.name || localStorage.getItem("username") || "Anonymous";
 
   useEffect(() => {
-    const newSocket = io("http://localhost:3024", { query: { username: name } }); // Pass username via query parameter
+    const newSocket = io("http://localhost:3024", { query: { username: name } });
     setSocket(newSocket);
 
     newSocket.emit("join-race", { username: name });
 
-    // Listen to server events
     newSocket.on("player-joined", (playersList) => {
       setPlayers(playersList);
     });
@@ -86,16 +84,21 @@ export default function TypingPage() {
         setUserInput((prev) => prev + e.key);
         setCursorPosition((prev) => prev + 1);
 
-        if (e.key !== text[cursorPosition]) setTotalErrors((prev) => prev + 1);
+        // Check if the typed character is correct or not
+        if (e.key === text[cursorPosition]) {
+          // Correct character typed
+          if (startTime) {
+            const timeElapsed = (new Date() - startTime) / 1000 / 60;
+            const newCpm = Math.round((cursorPosition + 1) / timeElapsed); // Update CPM based on correct characters
+            setCpm(newCpm);
 
-        if (startTime) {
-          const timeElapsed = (new Date() - startTime) / 1000 / 60;
-          const newCpm = Math.round(cursorPosition / timeElapsed);
-          setCpm(newCpm);
-
-          // Emit typing progress to server
-          const progress = calculateProgress();
-          socket.emit("update-progress", { progress, currentWpm: newCpm });
+            // Emit typing progress to server only if the character is correct
+            const progress = calculateProgress();
+            socket.emit("update-progress", { progress, currentWpm: newCpm });
+          }
+        } else {
+          // Incorrect character typed
+          setTotalErrors((prev) => prev + 1);
         }
       }
     };
@@ -117,7 +120,14 @@ export default function TypingPage() {
 
   const calculateProgress = () => {
     if (!text.length) return 0;
-    return Math.round((cursorPosition / text.length) * 100);
+
+    // Only count correct characters for progress calculation
+    let correctChars = 0;
+    for (let i = 0; i < userInput.length; i++) {
+      if (userInput[i] === text[i]) correctChars++;
+      else break; // Stop counting after the first mistake
+    }
+    return Math.round((correctChars / text.length) * 100);
   };
 
   const getCharacterStyle = (index) => {
