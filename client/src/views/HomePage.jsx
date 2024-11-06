@@ -1,15 +1,18 @@
-import axios from 'axios';
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import clickSound from '../assets/sounds/click-sound.mp3';
 import foxAvatar from '../assets/fox.png';
 
 export default function HomePage({ base_url }) {
     const [name, setName] = useState('');
-    const [language, setLanguage] = useState('English');
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [language, setLanguage] = useState('ID');
+    const [selectedGame, setSelectedGame] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const navigate = useNavigate();
+
+    // Audio instance for the click sound
+    const clickAudio = new Audio(clickSound);
 
     const categories = {
         Animals: ["Dog", "Cat"],
@@ -17,33 +20,33 @@ export default function HomePage({ base_url }) {
         Places: ["Beach", "Mountain"]
     };
 
-    const handlePlayGame1 = () => {
-        setIsModalOpen(true); // Open the modal when "Play Now" is clicked
+    // Handle Game Selection
+    const selectGame = (game) => {
+        clickAudio.play(); // Play sound when game is selected
+        setSelectedGame(game);
     };
 
-    // const handleCategorySelect = (category) => {
-    //     setSelectedCategory(category);
-    // };
+    // Handle Play Now Button Click
+    const handlePlayNow = () => {
+        if (!name || !selectedGame) return;
+
+        clickAudio.play(); // Play sound on clicking Play Now
+
+        if (selectedGame === 'drawing-game') {
+            setIsModalOpen(true);
+        } else {
+            navigate('/typing-game', { state: { name, language } });
+        }
+    };
 
     const handleCategorySelect = (category) => {
         setSelectedCategory(category);
+        setIsModalOpen(false);
         navigate('/drawing-game', { state: { name, language, category } });
     };
 
-    const handleItemSelect = (item) => {
-        setSelectedItem(item);
-        navigate('/drawing-game', { state: { name, language, item } });
-    };
-
-    const handlePlayGame2 = () => {
-        navigate('/typing-game', { state: { name, language } });
-    };
-
-
-
     return (
         <div style={{ backgroundColor: '#A3C4C9' }} className="bg-saltedegg w-full h-screen flex flex-col items-center justify-center">
-            {/* Title Section */}
             <h1 className="text-4xl font-bold mb-8" style={{ fontFamily: '"Press Start 2P", sans-serif', color: '#333' }}>
                 Draw, Type, Win!
             </h1>
@@ -56,39 +59,33 @@ export default function HomePage({ base_url }) {
                     </h2>
                     <div className="space-y-4">
                         {/* Game Card 1 */}
-                        <div className="bg-blue-200 border-4 border-black p-4 rounded-lg text-center hover:bg-blue-300 transition">
+                        <div
+                            onClick={() => selectGame('drawing-game')}
+                            className={`bg-blue-200 border-4 border-black p-4 rounded-lg text-center cursor-pointer transform transition-transform hover:scale-105 ${selectedGame === 'drawing-game' ? 'ring-4 ring-blue-400' : ''}`}
+                        >
                             <h3 className="text-lg font-bold mb-2" style={{ fontFamily: '"Press Start 2P", sans-serif' }}>
                                 Game 1: inkIt!
                             </h3>
                             <p className="text-sm mb-4" style={{ fontFamily: '"Roboto Mono", sans-serif' }}>
                                 Show off your drawing skills and guess others' creations!
                             </p>
-                            <button
-                                onClick={handlePlayGame1}
-                                className="bg-red-400 border-4 border-black py-2 px-4 rounded-lg hover:bg-red-500 transition"
-                            >
-                                Play Now
-                            </button>
                         </div>
                         {/* Game Card 2 */}
-                        <div className="bg-green-200 border-4 border-black p-4 rounded-lg text-center hover:bg-green-300 transition">
+                        <div
+                            onClick={() => selectGame('typing-game')}
+                            className={`bg-green-200 border-4 border-black p-4 rounded-lg text-center cursor-pointer transform transition-transform hover:scale-105 ${selectedGame === 'typing-game' ? 'ring-4 ring-green-400' : ''}`}
+                        >
                             <h3 className="text-lg font-bold mb-2" style={{ fontFamily: '"Press Start 2P", sans-serif' }}>
-                                Game 2: Type Race!
+                                Game 2: Typing Race!
                             </h3>
                             <p className="text-sm mb-4" style={{ fontFamily: '"Roboto Mono", sans-serif' }}>
-                                Put your typing skills and win the race!
+                                Put your typing skill and win the race!
                             </p>
-                            <button
-                                onClick={handlePlayGame2}
-                                className="bg-red-400 border-4 border-black py-2 px-4 rounded-lg hover:bg-red-500 transition"
-                            >
-                                Play Now
-                            </button>
                         </div>
                     </div>
                 </section>
 
-                {/* Login & Settings Section */}
+                {/* Profile & Settings Section */}
                 <section className="flex-1 bg-yellow-200 border-4 border-black p-6 rounded-lg">
                     <div className="text-center mb-6">
                         <img src={foxAvatar} alt="Avatar" className="w-20 h-20 mx-auto rounded-full border-4 border-black mb-4" />
@@ -114,17 +111,19 @@ export default function HomePage({ base_url }) {
                             <option>Bahasa Indonesia</option>
                         </select>
                     </div>
-                    <div className="flex justify-between">
-                        <Link to="/rooms" className="bg-gray-200 border-4 border-black text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition">
-                            Choose Room
-                        </Link>
-                        <button className="bg-blue-400 border-4 border-black text-white py-2 px-4 rounded-lg hover:bg-blue-500 transition">
+                    <div className="flex justify-center">
+                        <button
+                            onClick={handlePlayNow}
+                            disabled={!name || !selectedGame}
+                            className={`bg-blue-400 border-4 border-black text-white py-2 px-4 rounded-lg hover:bg-blue-500 transition ${!name || !selectedGame ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
                             Play Now
                         </button>
                     </div>
                 </section>
             </main>
-            {/* Modal for Category Selection */}
+
+            {/* Category Selection Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white w-80 p-5 rounded-lg shadow-lg border-4 border-black">
