@@ -6,22 +6,37 @@ import foxAvatar from '../assets/fox.png';
 export default function HomePage({ base_url }) {
     const [name, setName] = useState('');
     const [language, setLanguage] = useState('English');
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const [selectedItem, setSelectedItem] = useState(null);
     const navigate = useNavigate();
+
+    const categories = {
+        Animals: ["Dog", "Cat"],
+        Food: ["Pizza", "Burger"],
+        Places: ["Beach", "Mountain"]
+    };
 
     const handlePlayGame1 = () => {
         setIsModalOpen(true); // Open the modal when "Play Now" is clicked
     };
 
+    // const handleCategorySelect = (category) => {
+    //     setSelectedCategory(category);
+    // };
+
     const handleCategorySelect = (category) => {
-        // Handle category selection, then navigate to the game page
-        setIsModalOpen(false);
-        navigate('/draw-guess', { state: { name, language, category } });
+        setSelectedCategory(category);
+        navigate('/drawing-game', { state: { name, language, category } });
+    };
+
+    const handleItemSelect = (item) => {
+        setSelectedItem(item);
+        navigate('/drawing-game', { state: { name, language, item } });
     };
 
     const handlePlayGame2 = () => {
-        navigate('/quiz-show', { state: { name, language } });
+        navigate('/typing-game', { state: { name, language } });
     };
 
 
@@ -30,7 +45,7 @@ export default function HomePage({ base_url }) {
         <div style={{ backgroundColor: '#A3C4C9' }} className="bg-saltedegg w-full h-screen flex flex-col items-center justify-center">
             {/* Title Section */}
             <h1 className="text-4xl font-bold mb-8" style={{ fontFamily: '"Press Start 2P", sans-serif', color: '#333' }}>
-                Draw, Guess, Win!
+                Draw, Type, Win!
             </h1>
 
             <main style={{ backgroundColor: '#A3C4C9' }} className="flex gap-10 max-w-4xl w-full p-10 bg-white rounded-lg">
@@ -61,7 +76,7 @@ export default function HomePage({ base_url }) {
                                 Game 2: Type Race!
                             </h3>
                             <p className="text-sm mb-4" style={{ fontFamily: '"Roboto Mono", sans-serif' }}>
-                                Put your knowledge to the test in this exciting quiz game!
+                                Put your typing skills and win the race!
                             </p>
                             <button
                                 onClick={handlePlayGame2}
@@ -117,33 +132,19 @@ export default function HomePage({ base_url }) {
                             Select a Category
                         </h2>
                         <ul className="space-y-2">
-                            <li>
-                                <button
-                                    onClick={() => handleCategorySelect('Animals')}
-                                    className="w-full bg-blue-200 hover:bg-blue-300 py-2 rounded-lg border-2 border-black"
-                                >
-                                    Animals
-                                </button>
-                            </li>
-                            <li>
-                                <button
-                                    onClick={() => handleCategorySelect('Food')}
-                                    className="w-full bg-green-200 hover:bg-green-300 py-2 rounded-lg border-2 border-black"
-                                >
-                                    Food
-                                </button>
-                            </li>
-                            <li>
-                                <button
-                                    onClick={() => handleCategorySelect('Places')}
-                                    className="w-full bg-yellow-200 hover:bg-yellow-300 py-2 rounded-lg border-2 border-black"
-                                >
-                                    Places
-                                </button>
-                            </li>
+                            {Object.keys(categories).map((category) => (
+                                <li key={category}>
+                                    <button
+                                        onClick={() => handleCategorySelect(category)}
+                                        className="w-full bg-blue-200 hover:bg-blue-300 py-2 rounded-lg border-2 border-black"
+                                    >
+                                        {category}
+                                    </button>
+                                </li>
+                            ))}
                         </ul>
                         <button
-                            onClick={() => setIsModalOpen(false)} // Close the modal
+                            onClick={() => setIsModalOpen(false)}
                             className="mt-4 w-full bg-red-400 hover:bg-red-500 py-2 rounded-lg border-2 border-black"
                         >
                             Cancel
