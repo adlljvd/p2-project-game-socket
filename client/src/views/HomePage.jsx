@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clickSound from '../assets/sounds/click-sound.mp3';
 import foxAvatar from '../assets/fox.png';
 
-export default function HomePage({ base_url }) {
+export default function HomePage() {
     const [name, setName] = useState('');
     const [language, setLanguage] = useState('ID');
     const [selectedGame, setSelectedGame] = useState(null);
@@ -11,7 +11,6 @@ export default function HomePage({ base_url }) {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const navigate = useNavigate();
 
-    // Audio instance for the click sound
     const clickAudio = new Audio(clickSound);
 
     const categories = {
@@ -20,17 +19,16 @@ export default function HomePage({ base_url }) {
         Places: ["Beach", "Mountain"]
     };
 
-    // Handle Game Selection
     const selectGame = (game) => {
-        clickAudio.play(); // Play sound when game is selected
+        clickAudio.play();
         setSelectedGame(game);
     };
 
-    // Handle Play Now Button Click
     const handlePlayNow = () => {
         if (!name || !selectedGame) return;
 
-        clickAudio.play(); // Play sound on clicking Play Now
+        clickAudio.play();
+        localStorage.setItem("username", name);
 
         if (selectedGame === 'drawing-game') {
             setIsModalOpen(true);
@@ -52,13 +50,11 @@ export default function HomePage({ base_url }) {
             </h1>
 
             <main style={{ backgroundColor: '#A3C4C9' }} className="flex gap-10 max-w-4xl w-full p-10 bg-white rounded-lg">
-                {/* Game Selection Section */}
                 <section className="flex-1 bg-pink-200 border-4 border-black p-6 rounded-lg">
                     <h2 className="text-2xl font-semibold text-center mb-4" style={{ fontFamily: '"Roboto Mono", sans-serif' }}>
                         Select Your Game
                     </h2>
                     <div className="space-y-4">
-                        {/* Game Card 1 */}
                         <div
                             onClick={() => selectGame('drawing-game')}
                             className={`bg-blue-200 border-4 border-black p-4 rounded-lg text-center cursor-pointer transform transition-transform hover:scale-105 ${selectedGame === 'drawing-game' ? 'ring-4 ring-blue-400' : ''}`}
@@ -70,7 +66,6 @@ export default function HomePage({ base_url }) {
                                 Show off your drawing skills and guess others' creations!
                             </p>
                         </div>
-                        {/* Game Card 2 */}
                         <div
                             onClick={() => selectGame('typing-game')}
                             className={`bg-green-200 border-4 border-black p-4 rounded-lg text-center cursor-pointer transform transition-transform hover:scale-105 ${selectedGame === 'typing-game' ? 'ring-4 ring-green-400' : ''}`}
@@ -85,13 +80,10 @@ export default function HomePage({ base_url }) {
                     </div>
                 </section>
 
-                {/* Profile & Settings Section */}
                 <section className="flex-1 bg-yellow-200 border-4 border-black p-6 rounded-lg">
                     <div className="text-center mb-6">
                         <img src={foxAvatar} alt="Avatar" className="w-20 h-20 mx-auto rounded-full border-4 border-black mb-4" />
-                        <p className="text-black font-bold" style={{ fontFamily: '"Press Start 2P", sans-serif' }}>
-                            Avatar
-                        </p>
+                        <p className="text-black font-bold" style={{ fontFamily: '"Press Start 2P", sans-serif' }}>Avatar</p>
                     </div>
                     <div className="mb-4">
                         <input
@@ -123,7 +115,6 @@ export default function HomePage({ base_url }) {
                 </section>
             </main>
 
-            {/* Category Selection Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white w-80 p-5 rounded-lg shadow-lg border-4 border-black">

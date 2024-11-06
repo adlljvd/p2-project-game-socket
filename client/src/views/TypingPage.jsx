@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import foxAvatar from "../assets/fox.png";
-import { useNavigate } from "react-router-dom";
-
-const socket = io("http://localhost:3024"); // Adjust the URL if needed
-
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function TypingPage() {
+  const [socket, setSocket] = useState(null);
   const paragraphs = [
     "Kucing sepatu bunga terbang layang hati pelangi gelas, bulu mata pintu suara malam sarung tangga asap jendela salju hujan pelangi sapi jam meja tanah.",
     "Kursi kabut tas mobil bulan celana laut payung lilin sandal rak...",
@@ -17,7 +15,7 @@ export default function TypingPage() {
 
   const [text, setText] = useState(getRandomParagraph());
   const [userInput, setUserInput] = useState("");
-  const [cursorPosition, setCursorPosition] = useState("");
+  const [cursorPosition, setCursorPosition] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isGameActive, setIsGameActive] = useState(false);
@@ -25,14 +23,23 @@ export default function TypingPage() {
   const [totalErrors, setTotalErrors] = useState(0);
   const [players, setPlayers] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get name from location state or fallback to localStorage
+  const name = location.state?.name || localStorage.getItem("username") || "Anonymous";
 
   useEffect(() => {
-    // Join race on mount
-    socket.emit("join-race", { username: "Player 1" });
+    const newSocket = io("http://localhost:3024", { query: { username: name } }); // Pass username via query parameter
+    setSocket(newSocket);
+
+    newSocket.emit("join-race", { username: name });
 
     // Listen to server events
-    socket.on("player-joined", (playersList) => setPlayers(playersList));
-    socket.on("player-progress", ({ playerId, progress, currentWpm }) => {
+    newSocket.on("player-joined", (playersList) => {
+      setPlayers(playersList);
+    });
+
+    newSocket.on("player-progress", ({ playerId, progress, currentWpm }) => {
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
           player.id === playerId ? { ...player, progress, wpm: currentWpm } : player
@@ -40,10 +47,27 @@ export default function TypingPage() {
       );
     });
 
+    newSocket.on("player-disconnected", (playerId) => {
+      setPlayers((prevPlayers) => prevPlayers.filter((player) => player.id !== playerId));
+    });
+
     return () => {
-      socket.disconnect();
+      newSocket.disconnect();
     };
-  }, []);
+  }, [name]);
+
+  useEffect(() => {
+    let timer;
+    if (isGameActive) {
+      timer = setInterval(() => {
+        setElapsedTime((prevTime) => prevTime + 0.1); // Increment time by 0.1s
+      }, 100);
+    } else if (!isGameActive && elapsedTime !== 0) {
+      clearInterval(timer);
+    }
+
+    return () => clearInterval(timer);
+  }, [isGameActive]);
 
   useEffect(() => {
     const handleKeyPress = (e) => {
@@ -71,22 +95,21 @@ export default function TypingPage() {
 
           // Emit typing progress to server
           const progress = calculateProgress();
-          socket.emit("update-progress", { progress, currentWpm: cpm });
-          console.log("Emitted Progress:", progress);
-          // socket.emit("update-progress", { progress: calculateProgress(), currentWpm: newCpm });
+          socket.emit("update-progress", { progress, currentWpm: newCpm });
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isGameActive, cursorPosition, text, startTime]);
+  }, [isGameActive, cursorPosition, text, startTime, socket]);
 
   const startGame = () => {
     setText(getRandomParagraph());
     setUserInput("");
     setCursorPosition(0);
     setElapsedTime(0);
+    setTotalErrors(0);
     setCpm(0);
     setStartTime(new Date());
     setIsGameActive(true);
@@ -94,11 +117,8 @@ export default function TypingPage() {
 
   const calculateProgress = () => {
     if (!text.length) return 0;
-    const progress = Math.round((cursorPosition / text.length) * 100);
-    console.log("Calculated Progress:", progress);
-    return progress;
+    return Math.round((cursorPosition / text.length) * 100);
   };
-
 
   const getCharacterStyle = (index) => {
     if (index === cursorPosition) {
@@ -111,11 +131,6 @@ export default function TypingPage() {
     }
     return ""; // Default style for untyped characters
   };
-
-  useEffect(() => {
-    console.log("Players State Updated:", players);
-  }, [players]);
-
 
   return (
     <div className="min-h-screen bg-[#A3C4C9] p-4 lg:p-8">
@@ -141,7 +156,7 @@ export default function TypingPage() {
                   <img src={foxAvatar} alt="avatar" className="w-10 h-10 rounded-full border-2 border-black" />
                   <div className="flex-1">
                     <div className="flex justify-between items-center">
-                      <p className="font-bold">{player.name}</p>
+                      <p className="font-bold">{player.username}</p>
                       <p className="text-sm font-mono">{player.cpm} CPM</p>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-6 mt-1 relative">
