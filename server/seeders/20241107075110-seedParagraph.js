@@ -3,16 +3,17 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const room = require('../data/room.json')
-    room.forEach(el => {
+    const paragraph = require('../data/paragraph.json')
+    paragraph.forEach(el => {
       delete el.id
+
       el.createdAt = el.updatedAt = new Date()
     })
 
-    await queryInterface.bulkInsert('Rooms', room, {})
+    await queryInterface.bulkInsert('Paragraphs', paragraph, {})
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('Rooms', null, {})
+    await queryInterface.bulkDelete('Paragraphs', null, {})
   }
 };
