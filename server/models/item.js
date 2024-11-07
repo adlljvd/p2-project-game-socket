@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
       Item.belongsTo(models.Category, { foreignKey: 'CategoryId' })
     }
   }
@@ -19,11 +18,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: {
-          msg: 'name is required'
-        },
         notEmpty: {
-          msg: 'name is required'
+          msg: "Name is required"
         }
       }
     },
@@ -31,14 +27,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
-        notNull: {
-          msg: 'CategoryId is required'
-        },
         notEmpty: {
-          msg: 'CategoryId is required'
+          msg: "Category is required"
         }
       }
-    },
+    }
   }, {
     sequelize,
     modelName: 'Item',

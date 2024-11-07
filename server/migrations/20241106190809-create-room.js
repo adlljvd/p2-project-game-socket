@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Items', {
+    await queryInterface.createTable('Rooms', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,37 +11,29 @@ module.exports = {
       },
       name: {
         allowNull: false,
-        type: Sequelize.STRING,
-        validate: {
-          notNull: {
-            msg: 'name is required'
-          },
-          notEmpty: {
-            msg: 'name is required'
-          }
-        }
+        type: Sequelize.STRING
+      },
+      status: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       CategoryId: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.INTEGER,
         references: {
           model: 'Categories',
           key: 'id'
-        },
-        onDelete: "cascade",
-        onUpdate: "cascade",
-        validate: {
-          notNull: {
-            msg: 'CategoryId is required'
-          },
-          notEmpty: {
-            msg: 'CategoryId is required'
-          }
-
         }
       },
-      createdAt: {
+      maxPlayer: {
         allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      game: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE
       },
@@ -52,6 +44,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Items');
+    await queryInterface.dropTable('Rooms');
   }
 };

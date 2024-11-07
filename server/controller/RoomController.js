@@ -1,6 +1,6 @@
 const { Room, Category, Item } = require('../models')
 
-class RoomController {
+class Controller {
 
     static async read(req, res, next) {
         try {
@@ -40,11 +40,11 @@ class RoomController {
     static async create(req, res, next) {
         try {
             const { name, CategoryId, maxPlayer, game } = req.body
-            const room = await Room.create({
-                name,
-                CategoryId,
-                maxPlayer,
-                game
+            const room = await Room.create({ 
+                name, 
+                CategoryId, 
+                maxPlayer, 
+                game 
             })
 
             // Fetch room dengan Category dan Items
@@ -57,9 +57,9 @@ class RoomController {
                 }]
             })
 
-            res.status(201).json({
-                message: "Room created successfully",
-                room: roomWithData
+            res.status(201).json({ 
+                message: "Room created successfully", 
+                room: roomWithData 
             })
         } catch (error) {
             next(error)
@@ -95,4 +95,4 @@ class RoomController {
     }
 }
 
-module.exports = RoomController
+module.exports = Controller
