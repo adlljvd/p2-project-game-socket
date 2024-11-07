@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import { io } from "socket.io-client";
 import foxAvatar from "../assets/fox.png";
 
-const socket = io("http://localhost:3024");
+const socket = io("http://localhost:3000");
 
 export default function DrawingPage() {
   const location = useLocation();

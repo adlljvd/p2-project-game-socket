@@ -1,9 +1,15 @@
 const router = require("express").Router();
-const RoomController = require("../controller/RoomController");
-const CategoryController = require("../controller/CategoryController");
+const CategoryController = require("../controller/categoryController");
 const ParagraphController = require("../controller/ParagraphController");
+const RoomController = require("../controller/roomController");
 
-router.get("/categories", CategoryController.read);
+router.get("/categories", CategoryController.readCategories);
+router.post("/categories", CategoryController.addCategories);
+router.put("/categories/:id", CategoryController.updateCategories);
+router.delete("/categories/:id", CategoryController.deleteCategories);
+
+
+// paragraphs 
 router.get("/paragraphs", ParagraphController.read);
 
 router.get("/", RoomController.read);
