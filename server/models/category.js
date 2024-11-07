@@ -10,8 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
-      Category.hasMany(models.Room, { foreignKey: 'CategoryId' })
+      Category.hasOne(models.Room, { foreignKey: 'CategoryId' })
       Category.hasMany(models.Item, { foreignKey: 'CategoryId' })
     }
   }
@@ -20,14 +19,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: {
-          msg: 'name is required'
-        },
         notEmpty: {
-          msg: 'name is required'
+          msg: "Name is required"
         }
       }
-    },
+    }
   }, {
     sequelize,
     modelName: 'Category',

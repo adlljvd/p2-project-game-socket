@@ -14,7 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Paragraph.init({
-    paragraph: DataTypes.STRING
+    paragraph: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Paragraph is required"
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Paragraph',
