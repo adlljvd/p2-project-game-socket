@@ -2,12 +2,12 @@ const http = require('http');
 const { Server } = require('socket.io');
 const app = require('../app');
 
-const PORT = 3024; // Hardcoded URL, tidak menggunakan process.env
+const PORT = 3024;
 const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:5173", // Hardcoded URL
+        origin: "http://localhost:5173",
         methods: ["GET", "POST"]
     }
 });
@@ -19,7 +19,6 @@ let typingPlayers = new Map();
 io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
-    // Mengirimkan status gambar dan chat history saat user bergabung
     socket.emit("drawing-state", drawingState);
     socket.emit("chat-history", chatHistory);
 
@@ -33,14 +32,13 @@ io.on("connection", (socket) => {
         io.emit("receive-message", messageWithId);
     });
 
-    // Event untuk menggambar real-time
     socket.on("start-drawing", (data) => {
-        drawingState.push(data); // Menyimpan posisi awal drawing
+        drawingState.push(data);
         socket.broadcast.emit("start-drawing", data);
     });
 
     socket.on("draw", (data) => {
-        drawingState.push(data); // Menyimpan garis yang digambar
+        drawingState.push(data);
         socket.broadcast.emit("draw", data);
     });
 
@@ -49,22 +47,22 @@ io.on("connection", (socket) => {
     });
 
     socket.on("clear-canvas", () => {
-        drawingState = []; // Reset state gambar
+        drawingState = [];
         io.emit("clear-canvas");
     });
 
-    // Chat Room untuk Drawing Game
+
     socket.on("send-room-message", (messageData) => {
         const messageWithId = {
             ...messageData,
             id: Date.now(),
             socketId: socket.id
         };
-        chatHistory.push(messageWithId); // Menyimpan pesan di history
-        io.emit("receive-room-message", messageWithId); // Emit pesan ke semua user di room
+        chatHistory.push(messageWithId);
+        io.emit("receive-room-message", messageWithId);
     });
 
-    // Untuk Typing Race tetap seperti semula, tidak diubah
+
     socket.on("join-race", ({ username }) => {
         typingPlayers.set(socket.id, {
             id: socket.id,
