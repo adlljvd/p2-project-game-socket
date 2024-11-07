@@ -4,13 +4,7 @@ class CategoryController {
     // category
     static async readCategories(req, res, next) {
         try {
-            const category = await Category.findAll({
-                include: [
-                    {
-                        model: Item
-                    }
-                ]
-            })
+            const category = await Category.findAll()
 
             res.status(200).json({
                 category
@@ -21,9 +15,9 @@ class CategoryController {
     }
     static async addCategories(req, res, next) {
         try {
-            const { name, imgUrl } = req.body
+            const { name } = req.body
 
-            const category = await Category.create({ name, imgUrl }, {
+            const category = await Category.create({ name }, {
                 include: [
                     {
                         model: Item
@@ -42,7 +36,7 @@ class CategoryController {
     static async updateCategories(req, res, next) {
         try {
             const { id } = req.params
-            const { name, imgUrl } = req.body
+            const { name } = req.body
 
             const findCategory = await Category.findByPk(id)
 
@@ -50,7 +44,7 @@ class CategoryController {
                 throw { name: "DataNotFound" }
             }
 
-            const category = await findCategory.update({ name, imgUrl }, {
+            const category = await findCategory.update({ name }, {
                 where: {
                     id: findCategory.id
                 }

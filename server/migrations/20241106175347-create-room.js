@@ -53,16 +53,11 @@ module.exports = {
       },
       maxPlayer: {
         allowNull: false,
-        type: Sequelize.INTEGER,
-        validate: {
-          notNull: {
-            msg: 'maxPlayer is required'
-          },
-          notEmpty: {
-            msg: 'maxPlayer is required'
-          }
-        },
-        defaultValue: 8
+        type: Sequelize.INTEGER
+      },
+      game: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx nodemon bin/www",
+    "start": "npx nodemon app.js",
     "test": "jest --detectOpenHandles --runInBand"
   },
   "keywords": [],

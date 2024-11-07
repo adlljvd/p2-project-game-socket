@@ -1,25 +1,21 @@
-const CategoryController = require('../controllers/categoryController')
-const itemController = require('../controllers/itemController')
-const RoomController = require('../controllers/roomController')
+const router = require("express").Router();
+const CategoryController = require("../controller/categoryController");
+const ParagraphController = require("../controller/ParagraphController");
+const RoomController = require("../controller/roomController");
 
-const router = require('express').Router()
-
-router.get('/', CategoryController.readCategories)
-router.post('/', CategoryController.addCategories)
-router.put('/:id', CategoryController.updateCategories)
-router.delete('/:id', CategoryController.deleteCategories)
+router.get("/categories", CategoryController.readCategories);
+router.post("/categories", CategoryController.addCategories);
+router.put("/categories/:id", CategoryController.updateCategories);
+router.delete("/categories/:id", CategoryController.deleteCategories);
 
 
-// items
-router.get('/items', itemController.readItems)
-router.post('/items', itemController.addItems)
-router.put('/items/:id', itemController.updateItems)
-router.delete('/items/:id', itemController.deleteItem)
+// paragraphs 
+router.get("/paragraphs", ParagraphController.read);
 
-// rooms
-router.get('/rooms', RoomController.read)
-router.post('/rooms', RoomController.add)
-router.put('/rooms/:id', RoomController.update)
-router.delete('/rooms/:id', RoomController.delete)
+router.get("/", RoomController.read);
+router.get("/:id", RoomController.readOne);
+router.post("/", RoomController.create);
+router.patch("/:id", RoomController.updateStatus);
+router.delete("/:id", RoomController.delete);
 
-module.exports = router
+module.exports = router;

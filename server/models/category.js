@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Category.hasMany(models.Item, { foreignKey: 'CategoryId' })
       Category.hasMany(models.Room, { foreignKey: 'CategoryId' })
+      Category.hasMany(models.Item, { foreignKey: 'CategoryId' })
     }
   }
   Category.init({
@@ -25,18 +25,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         notEmpty: {
           msg: 'name is required'
-        }
-      }
-    },
-    imgUrl: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'imgUrl is required'
-        },
-        notEmpty: {
-          msg: 'imgUrl is required'
         }
       }
     },
