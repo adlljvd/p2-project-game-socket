@@ -23,6 +23,10 @@ const errorHandler = async (error, req, res, next) => {
         message = "Data not found";
     }
 
+    if (error.name === 'RoomNotFound') {
+        status = 404
+        message = 'Room not found'
+    }
 
     res.status(status).json({
         message,

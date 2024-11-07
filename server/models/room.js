@@ -53,17 +53,18 @@ module.exports = (sequelize, DataTypes) => {
     },
     maxPlayer: {
       type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 4
+    },
+    game: {
+      type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: {
-          msg: 'maxPlayer is required'
-        },
         notEmpty: {
-          msg: 'maxPlayer is required'
+          msg: "Game is required"
         }
-      },
-      defaultValue: 8
-    },
+      }
+    }
   }, {
     sequelize,
     modelName: 'Room',

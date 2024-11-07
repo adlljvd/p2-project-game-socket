@@ -1,32 +1,37 @@
 [
   {
     "name": "Room A",
-    "status": "Playing",
+    "status": "playing",
     "CategoryId": 1,
-    "maxPlayer": 8
+    "maxPlayer": 8,
+    "game": "drawing-game"
   },
   {
     "name": "Room B",
-    "status": "Online",
+    "status": "waiting",
     "CategoryId": 2,
-    "maxPlayer": 8
+    "maxPlayer": 8,
+    "game": "typing-race"
   },
   {
     "name": "Room C",
-    "status": "Playing",
+    "status": "playing",
     "CategoryId": 3,
-    "maxPlayer": 8
+    "maxPlayer": 8,
+    "game": "drawing-game"
   },
   {
     "name": "Room D",
-    "status": "Playing",
+    "status": "playing",
     "CategoryId": 1,
-    "maxPlayer": 8
+    "maxPlayer": 8,
+    "game": "typing-race"
   },
   {
     "name": "Room E",
-    "status": "Online",
+    "status": "waiting",
     "CategoryId": 2,
-    "maxPlayer": 8
+    "maxPlayer": 8,
+    "game": "drawing-game"
   }
 ]
