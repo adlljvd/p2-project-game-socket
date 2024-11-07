@@ -40,10 +40,7 @@ export default function DrawingPage({ base_url }) {
     const [errorMessage, setErrorMessage] = useState('');
     const [showError, setShowError] = useState(false);
 
-    const [isTimeUp, setIsTimeUp] = useState(false);
-    const navigate = useNavigate();
-    const [currentPlayer, setCurrentPlayer] = useState(1);
-    const [drawingData, setDrawingData] = useState([]);
+
 
     useEffect(() => {
         if (selectedItem) {
@@ -228,13 +225,6 @@ export default function DrawingPage({ base_url }) {
         fetchCategories();
     }, []);
 
-    // const handleCategorySelect = async (category) => {
-    //     await playClick();
-    //     setSelectedCategoryId(category.id);
-    //     setCategoryItems(category.items);
-    //     setShowItems(true);
-    // };
-
     const handleItemSelect = async (item) => {
         await playClick();
         setSelectedItem(item);
@@ -247,66 +237,6 @@ export default function DrawingPage({ base_url }) {
             drawer: name
         });
     };
-
-    const handleCancel = () => {
-        navigate('/');
-    };
-
-    const handleBackToCategories = async () => {
-        await playClick();
-        navigate('/');
-    };
-
-    const renderModal = () => (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white w-96 p-5 rounded-lg shadow-lg border-4 border-black">
-                <h2 className="text-xl font-bold mb-4 text-center" style={{ fontFamily: '"Roboto Mono", sans-serif' }}>
-                    {showItems ? 'Pilih Item untuk Digambar' : 'Pilih Kategori'}
-                </h2>
-
-                {!showItems ? (
-                    <ul className="space-y-2">
-                        {Array.isArray(categories) && categories.map((category) => (
-                            <li key={category.id}>
-                                <button
-                                    onClick={() => handleCategorySelect(category)}
-                                    className="w-full bg-blue-200 hover:bg-blue-300 py-2 rounded-lg border-2 border-black"
-                                >
-                                    {category.name}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <div>
-                        <div className="max-h-60 overflow-y-auto">
-                            <ul className="space-y-2">
-                                {Array.isArray(categoryItems) && categoryItems.map((item) => (
-                                    <li key={item.id}>
-                                        <button
-                                            onClick={() => handleItemSelect(item)}
-                                            className="w-full bg-green-200 hover:bg-green-300 py-2 rounded-lg border-2 border-black flex justify-between px-4"
-                                        >
-                                            <span>{item.name}</span>
-                                            <span className="text-sm text-gray-600">
-                                                ({item.difficulty})
-                                            </span>
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <button
-                            onClick={() => setShowItems(false)}
-                            className="mt-4 w-full bg-blue-400 text-white py-2 rounded-lg border-2 border-black"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
 
     useEffect(() => {
         if (location.state?.items) {
