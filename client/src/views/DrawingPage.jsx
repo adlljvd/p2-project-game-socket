@@ -13,7 +13,7 @@ export default function DrawingPage() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [color, setColor] = useState("#000000");
-  const [brushSize, setBrushSize] = useState(2);
+  const [brushSize, setBrushSize] = useState(2); // Synced brush size for all users
   const [tool, setTool] = useState("pencil");
   const [normalMessages, setNormalMessages] = useState([]);
   const [newNormalMessage, setNewNormalMessage] = useState("");
@@ -38,10 +38,14 @@ export default function DrawingPage() {
     window.addEventListener("resize", setCanvasSize);
     setContext(ctx);
 
-    socket.off("start-drawing").on("start-drawing", ({ x, y }) => {
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-    });
+    socket
+      .off("start-drawing")
+      .on("start-drawing", ({ x, y, color, tool, brushSize }) => {
+        ctx.strokeStyle = tool === "pencil" ? color : "white";
+        ctx.lineWidth = brushSize;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+      });
 
     socket.off("draw").on("draw", ({ x, y }) => {
       ctx.lineTo(x, y);
@@ -56,6 +60,25 @@ export default function DrawingPage() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     });
 
+    socket.off("update-color").on("update-color", (newColor) => {
+      setColor(newColor);
+      if (context) context.strokeStyle = newColor;
+    });
+
+    socket.off("update-tool").on("update-tool", ({ newTool, newBrushSize }) => {
+      setTool(newTool);
+      setBrushSize(newBrushSize);
+      if (context) {
+        context.strokeStyle = newTool === "pencil" ? color : "white";
+        context.lineWidth = newBrushSize;
+      }
+    });
+
+    socket.off("update-brushSize").on("update-brushSize", (newBrushSize) => {
+      setBrushSize(newBrushSize);
+      if (context) context.lineWidth = newBrushSize;
+    });
+
     socket.off("receive-room-message").on("receive-room-message", (message) => {
       setNormalMessages((prevMessages) => [...prevMessages, message]);
     });
@@ -63,14 +86,30 @@ export default function DrawingPage() {
     return () => {
       window.removeEventListener("resize", setCanvasSize);
     };
-  }, []);
+  }, [context, color]);
+
+  // Update context setiap kali color, brushSize, atau tool berubah
+  useEffect(() => {
+    if (context) {
+      context.strokeStyle = tool === "pencil" ? color : "white";
+      context.lineWidth = brushSize;
+    }
+  }, [color, brushSize, tool, context]);
 
   const startDrawing = (e) => {
     const { offsetX, offsetY } = e.nativeEvent;
     context.beginPath();
     context.moveTo(offsetX, offsetY);
     setIsDrawing(true);
-    socket.emit("start-drawing", { x: offsetX, y: offsetY });
+
+    // Emit start drawing with color, tool, and brushSize
+    socket.emit("start-drawing", {
+      x: offsetX,
+      y: offsetY,
+      color,
+      tool,
+      brushSize,
+    });
   };
 
   const draw = (e) => {
@@ -78,6 +117,8 @@ export default function DrawingPage() {
     const { offsetX, offsetY } = e.nativeEvent;
     context.lineTo(offsetX, offsetY);
     context.stroke();
+
+    // Emit drawing coordinates
     socket.emit("draw", { x: offsetX, y: offsetY });
   };
 
@@ -96,10 +137,29 @@ export default function DrawingPage() {
     e.preventDefault();
     if (newNormalMessage.trim()) {
       const messageData = { text: newNormalMessage, sender: name };
-
       socket.emit("send-room-message", messageData);
       setNewNormalMessage("");
     }
+  };
+
+  // Handle color change and emit
+  const handleColorChange = (newColor) => {
+    setColor(newColor);
+    socket.emit("update-color", newColor);
+  };
+
+  // Handle brush size change and emit
+  const handleBrushSizeChange = (newBrushSize) => {
+    setBrushSize(newBrushSize);
+    socket.emit("update-brushSize", newBrushSize);
+  };
+
+  // Handle tool change and emit both tool and brush size (for eraser mode)
+  const handleToolChange = (newTool) => {
+    const adjustedBrushSize = newTool === "eraser" ? brushSize * 3 : brushSize;
+    setTool(newTool);
+    setBrushSize(adjustedBrushSize);
+    socket.emit("update-tool", { newTool, newBrushSize: adjustedBrushSize });
   };
 
   return (
@@ -137,7 +197,7 @@ export default function DrawingPage() {
             <div className="flex flex-wrap justify-between gap-2 mb-4">
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => setTool("pencil")}
+                  onClick={() => handleToolChange("pencil")}
                   className={`px-3 lg:px-4 py-2 rounded-lg border-4 border-black font-bold text-sm lg:text-base ${
                     tool === "pencil"
                       ? "bg-blue-600 text-white ring-4 ring-blue-300"
@@ -147,7 +207,7 @@ export default function DrawingPage() {
                   ✏️ Pencil
                 </button>
                 <button
-                  onClick={() => setTool("eraser")}
+                  onClick={() => handleToolChange("eraser")}
                   className={`px-3 lg:px-4 py-2 rounded-lg border-4 border-black font-bold text-sm lg:text-base ${
                     tool === "eraser"
                       ? "bg-red-600 text-white ring-4 ring-red-300"
@@ -167,12 +227,14 @@ export default function DrawingPage() {
                 <input
                   type="color"
                   value={color}
-                  onChange={(e) => setColor(e.target.value)}
+                  onChange={(e) => handleColorChange(e.target.value)}
                   className="w-12 h-12 rounded border-4 border-black cursor-pointer"
                 />
                 <select
-                  value={brushSize}
-                  onChange={(e) => setBrushSize(Number(e.target.value))}
+                  value={brushSize} // Synced brush size
+                  onChange={(e) =>
+                    handleBrushSizeChange(Number(e.target.value))
+                  }
                   className="px-4 py-2 rounded-lg border-4 border-black"
                 >
                   <option value="2">2px</option>
